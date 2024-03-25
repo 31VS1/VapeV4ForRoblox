@@ -4408,7 +4408,24 @@ runFunction(function()
 		HoverText = "Prevents taking fall damage."
 	})
 end)
-
+runFunction(function()
+	local xxxporn = {Enabled = false}
+	local oldfall
+	xxxporn = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+		Name = "fuckingnigger",
+		Function = function(callback)
+			if callback then
+				task.spawn(function()
+					repeat
+						task.wait(0.5)
+						bedwars.ClientHandler:Get("GroundHit"):SendToServer()
+					until (not NoFall.Enabled)
+				end)
+			end
+		end, 
+		HoverText = "Prevents taking fall damage."
+	})
+end)
 runFunction(function()
 	local NoSlowdown = {Enabled = false}
 	local OldSetSpeedFunc
