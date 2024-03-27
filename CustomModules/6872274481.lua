@@ -3398,6 +3398,19 @@ runFunction(function()
 					InfiniteFly.ToggleButton(false)
 					return 
 				end
+                if Autowin.Enabled then
+                    local closestBed = FindClosestBed()
+                    if closestBed then
+                        MoveToBed(closestBed)
+                    else
+                        if AreAllBedsDestroyed() then
+                            local closestPlayer = FindClosestPlayerNotOnTeam()
+                            if closestPlayer then
+                                MoveToPlayer(closestPlayer)
+                            end
+                        end
+                    end
+                end
 				local goneup = false
 				RunLoops:BindToHeartbeat("InfiniteFly", function(delta) 
 					if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then 
@@ -3423,19 +3436,6 @@ runFunction(function()
 							speedCFrame[3] = clone.CFrame.Z
 							oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
 							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
-                            if Autowin.Enabled then
-                                local closestBed = FindClosestBed()
-                                if closestBed then
-                                    MoveToBed(closestBed)
-                                else
-                                    if AreAllBedsDestroyed() then
-                                        local closestPlayer = FindClosestPlayerNotOnTeam()
-                                        if closestPlayer then
-                                            MoveToPlayer(closestPlayer)
-                                        end
-                                    end
-                                end
-                            end
 						else
 							InfiniteFly.ToggleButton(false)
 						end
