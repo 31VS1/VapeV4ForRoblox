@@ -4410,6 +4410,9 @@ runFunction(function()
 end)
 runFunction(function()
 	local test = {Enabled = false}
+    local TweenService = game:GetService("TweenService")
+    local Players = game:GetService("Players")
+    local lplr = Players.LocalPlayer
     local function GetBeds()
         local beds = {}
         local function teamHasPlayers(teamColor)
