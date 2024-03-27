@@ -4466,6 +4466,15 @@ runFunction(function()
         local beds = GetBeds()
         return #beds == 0
     end
+    function FindPlayersOnDifferentTeams()
+        local playersOnDifferentTeams = {}
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player.Team ~= lplr.Team then
+                table.insert(playersOnDifferentTeams, player)
+            end
+        end
+        return playersOnDifferentTeams
+    end    
     function FindClosestPlayerNotOnTeam()
         local players = FindPlayersOnDifferentTeams()
         local closestPlayer = nil
