@@ -3262,6 +3262,9 @@ runFunction(function()
         local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
         tween:Play()
+        tween.Completed:Connect(function()
+            InfiniteFly.ToggleButton(false)
+        end)
     end
     function AreAllBedsDestroyed()
         local beds = GetBeds()
@@ -3399,10 +3402,6 @@ runFunction(function()
                     local closestBed = FindClosestBed()
                     if closestBed then
                         MoveToBed(closestBed)
-                        tween.Completed:Connect(function()
-                            InfiniteFly.ToggleButton(false)
-                            MoveToBed(closestBed)
-                        end)
                     else
                         if AreAllBedsDestroyed() then
                             local closestPlayer = FindClosestPlayerNotOnTeam()
