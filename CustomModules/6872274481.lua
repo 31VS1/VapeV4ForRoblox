@@ -3278,7 +3278,8 @@ runFunction(function()
             end
         end
         return playersOnDifferentTeams
-    end    
+    end
+    
     function FindClosestPlayerNotOnTeam()
         local players = FindPlayersOnDifferentTeams()
         local closestPlayer = nil
@@ -3292,12 +3293,14 @@ runFunction(function()
         end
         return closestPlayer
     end
+    
     function MoveToPlayerOrNextClosest()
         local closestPlayer = FindClosestPlayerNotOnTeam()
         if closestPlayer then
             MoveToPlayer(closestPlayer)
         end
     end
+    
     function MoveToPlayer(player)
         local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
         if not humanoidRootPart then return end
