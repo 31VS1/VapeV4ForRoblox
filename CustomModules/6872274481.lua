@@ -4453,16 +4453,17 @@ end
 function MoveToBed(bed)
     local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
     if not humanoidRootPart then return end
-    InfiniteFly.ToggleButton(true)
+    --InfiniteFly.ToggleButton(true)
     local targetPosition = bed.Position
     local distance = (targetPosition - humanoidRootPart.Position).magnitude
     local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
     local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
     tween.Completed:Connect(function()
-        InfiniteFly.ToggleButton(false)
+        --InfiniteFly.ToggleButton(false)
     end)
     tween:Play()
 end
+
 function AreAllBedsDestroyed()
     local beds = GetBeds()
     return #beds == 0
@@ -4515,7 +4516,7 @@ end
 runFunction(function()
 	local test = {Enabled = false}
     test = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-        Name = "x",
+        Name = "nigger",
         Function = function(callback)
             if callback then
                 repeat
