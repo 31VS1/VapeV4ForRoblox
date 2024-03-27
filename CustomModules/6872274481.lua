@@ -3313,9 +3313,7 @@ runFunction(function()
             if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
             else
                 MoveToPlayerOrNextClosest()
-                tween.Completed:Connect(function()
-                    InfiniteFly.ToggleButton(false)
-                end)
+                
             end
         end)
         tween:Play()
