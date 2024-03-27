@@ -3390,30 +3390,33 @@ runFunction(function()
 					return 
 				end
 				local goneup = false
-				RunLoops:BindToHeartbeat("InfiniteFly", function(delta) 
-					if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then 
-						if bedwarsStore.matchState == 0 then return end
-					end
-					if entityLibrary.isAlive then
-						if isnetworkowner(oldcloneroot) then 
-							local playerMass = (entityLibrary.character.HumanoidRootPart:GetMass() - 1.4) * (delta * 100)
-							
-							local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (InfiniteFlyMode.Value == "Normal" and InfiniteFlySpeed.Value or 20)
-							entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (InfiniteFlyUp and InfiniteFlyVerticalSpeed.Value or 0) + (InfiniteFlyDown and -InfiniteFlyVerticalSpeed.Value or 0), 0))
-							if InfiniteFlyMode.Value ~= "Normal" then
-								entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((InfiniteFlySpeed.Value + getSpeed()) - 20)) * delta
-							end
-
-							local speedCFrame = {oldcloneroot.CFrame:GetComponents()}
-							speedCFrame[1] = clone.CFrame.X
-							if speedCFrame[2] < 1000 or (not goneup) then 
-								task.spawn(warningNotification, "InfiniteFly", "Teleported Up", 3)
-								speedCFrame[2] = 100000
-								goneup = true
-							end
-							speedCFrame[3] = clone.CFrame.Z
-							oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
-							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
+                RunLoops:BindToHeartbeat("InfiniteFly", function(delta)
+                    if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then
+                        if bedwarsStore.matchState == 0 then
+                            return
+                        end
+                    end
+                    if entityLibrary.isAlive then
+                        if isnetworkowner(oldcloneroot) then
+                            local playerMass = (entityLibrary.character.HumanoidRootPart:GetMass() - 1.4) * (delta * 100)
+                
+                            local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (InfiniteFlyMode.Value == "Normal" and InfiniteFlySpeed.Value or 20)
+                            entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (InfiniteFlyUp and InfiniteFlyVerticalSpeed.Value or 0) + (InfiniteFlyDown and -InfiniteFlyVerticalSpeed.Value or 0), 0))
+                            if InfiniteFlyMode.Value ~= "Normal" then
+                                entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((InfiniteFlySpeed.Value + getSpeed()) - 20)) * delta
+                            end
+                
+                            local speedCFrame = {oldcloneroot.CFrame:GetComponents()}
+                            speedCFrame[1] = clone.CFrame.X
+                            if speedCFrame[2] < 1000 or (not goneup) then
+                                task.spawn(warningNotification, "InfiniteFly", "Teleported Up", 3)
+                                speedCFrame[2] = 100000
+                                goneup = true
+                            end
+                            speedCFrame[3] = clone.CFrame.Z
+                            oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
+                            oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
+                
                             if Autowin.Enabled then
                                 local closestBed = FindClosestBed()
                                 if closestBed then
@@ -3422,16 +3425,18 @@ runFunction(function()
                                     if AreAllBedsDestroyed() then
                                         local closestPlayer = FindClosestPlayerNotOnTeam()
                                         if closestPlayer then
-                                            MoveToPlayer(closestPlayer)
+                                            if closestPlayer == player then
+                                                MoveToPlayer(closestPlayer)
+                                            end
                                         end
                                     end
                                 end
                             end
-						else
-							InfiniteFly.ToggleButton(false)
-						end
-					end
-				end)
+                        else
+                            InfiniteFly.ToggleButton(false)
+                        end
+                    end
+                end)
 			else
 				RunLoops:UnbindFromHeartbeat("InfiniteFly")
 				if clonesuccess and oldcloneroot and clone and lplr.Character.Parent == workspace and oldcloneroot.Parent ~= nil and disabledproper and cloned == lplr.Character then 
