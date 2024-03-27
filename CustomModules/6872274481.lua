@@ -3205,6 +3205,109 @@ runFunction(function()
 		oldcloneroot.CFrame = CFrame.new(unpack(origcf))
 		oldcloneroot = nil
 	end
+    local TweenService = game:GetService("TweenService")
+    local Players = game:GetService("Players")
+    local lplr = Players.LocalPlayer
+    local function GetBeds()
+        local beds = {}
+        local function teamHasPlayers(teamColor)
+            for _, player in ipairs(game.Players:GetPlayers()) do
+                if player.Team and player.Team.TeamColor == teamColor then
+                    return true
+                end
+            end
+            return false
+        end
+    
+        for _, v in pairs(game.Workspace:GetChildren()) do
+            if string.lower(v.Name) == "bed" and v:FindFirstChild("Covers") ~= nil then
+                local covers = v:FindFirstChild("Covers")
+                if covers and covers.BrickColor ~= lplr.Team.TeamColor then
+                    local teamColor = covers.BrickColor
+                    if teamHasPlayers(teamColor) then
+                        table.insert(beds, v)
+                    end
+                end
+            end
+        end
+        
+        return beds
+    end
+    
+    function FindClosestBed()
+        local beds = GetBeds()
+        local closestBed = nil
+        local closestDistance = math.huge
+        for _, bed in ipairs(beds) do
+            local distance = (bed.Position - lplr.Character.HumanoidRootPart.Position).magnitude
+            if distance < closestDistance then
+                closestBed = bed
+                closestDistance = distance
+            end
+        end
+        return closestBed
+    end
+    function MoveToBed(bed)
+        local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart then return end
+        local targetPosition = bed.Position
+        InfiniteFly.ToggleButton(true)
+        local distance = (targetPosition - humanoidRootPart.Position).magnitude
+        local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
+        tween.Completed:Connect(function()
+            InfiniteFly.ToggleButton(false)
+        end)
+        tween:Play()
+    end
+    function AreAllBedsDestroyed()
+        local beds = GetBeds()
+        return #beds == 0
+    end
+    function FindPlayersOnDifferentTeams()
+        local playersOnDifferentTeams = {}
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player.Team ~= lplr.Team then
+                table.insert(playersOnDifferentTeams, player)
+            end
+        end
+        return playersOnDifferentTeams
+    end    
+    function FindClosestPlayerNotOnTeam()
+        local players = FindPlayersOnDifferentTeams()
+        local closestPlayer = nil
+        local closestDistance = math.huge
+        for _, player in ipairs(players) do
+            local distance = (player.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
+            if distance < closestDistance then
+                closestPlayer = player
+                closestDistance = distance
+            end
+        end
+        return closestPlayer
+    end
+    function MoveToPlayerOrNextClosest()
+        local closestPlayer = FindClosestPlayerNotOnTeam()
+        if closestPlayer then
+            MoveToPlayer(closestPlayer)
+        end
+    end
+    function MoveToPlayer(player)
+        local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart then return end
+        local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
+        if not targetPosition then return end
+        local distance = (targetPosition - humanoidRootPart.Position).magnitude
+        local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
+        tween.Completed:Connect(function()
+            if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+            else
+                MoveToPlayerOrNextClosest()
+            end
+        end)
+        tween:Play()
+    end
 
 	InfiniteFly = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 		Name = "InfiniteFly",
@@ -3311,6 +3414,19 @@ runFunction(function()
 							speedCFrame[3] = clone.CFrame.Z
 							oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
 							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
+                            if Autowin.Enabled then
+                                local closestBed = FindClosestBed()
+                                if closestBed then
+                                    MoveToBed(closestBed)
+                                else
+                                    if AreAllBedsDestroyed() then
+                                        local closestPlayer = FindClosestPlayerNotOnTeam()
+                                        if closestPlayer then
+                                            MoveToPlayer(closestPlayer)
+                                        end
+                                    end
+                                end
+                            end
 						else
 							InfiniteFly.ToggleButton(false)
 						end
@@ -3387,6 +3503,11 @@ runFunction(function()
 	})
 	InfiniteFlyVertical = InfiniteFly.CreateToggle({
 		Name = "Y Level",
+		Function = function() end, 
+		Default = true
+	})
+    Autowin = InfiniteFly.CreateToggle({
+		Name = "Autowin",
 		Function = function() end, 
 		Default = true
 	})
@@ -4407,138 +4528,6 @@ runFunction(function()
 		end, 
 		HoverText = "Prevents taking fall damage."
 	})
-end)
-runFunction(function()
-	local test = {Enabled = false}
-    local TweenService = game:GetService("TweenService")
-    local Players = game:GetService("Players")
-    local lplr = Players.LocalPlayer
-    local function GetBeds()
-        local beds = {}
-        local function teamHasPlayers(teamColor)
-            for _, player in ipairs(game.Players:GetPlayers()) do
-                if player.Team and player.Team.TeamColor == teamColor then
-                    return true
-                end
-            end
-            return false
-        end
-    
-        for _, v in pairs(game.Workspace:GetChildren()) do
-            if string.lower(v.Name) == "bed" and v:FindFirstChild("Covers") ~= nil then
-                local covers = v:FindFirstChild("Covers")
-                if covers and covers.BrickColor ~= lplr.Team.TeamColor then
-                    local teamColor = covers.BrickColor
-                    if teamHasPlayers(teamColor) then
-                        table.insert(beds, v)
-                    end
-                end
-            end
-        end
-        
-        return beds
-    end
-    
-    function FindClosestBed()
-        local beds = GetBeds()
-        local closestBed = nil
-        local closestDistance = math.huge
-        for _, bed in ipairs(beds) do
-            local distance = (bed.Position - lplr.Character.HumanoidRootPart.Position).magnitude
-            if distance < closestDistance then
-                closestBed = bed
-                closestDistance = distance
-            end
-        end
-        return closestBed
-    end
-    function MoveToBed(bed)
-        local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
-        if not humanoidRootPart then return end
-        GuiLibrary.ObjectsThatCanBeSavedInfiniteFly.Api.ToggleButton(true)
-        local targetPosition = bed.Position
-        local distance = (targetPosition - humanoidRootPart.Position).magnitude
-        local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-        local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
-        tween.Completed:Connect(function()
-            GuiLibrary.ObjectsThatCanBeSavedInfiniteFly.Api.ToggleButton(false)
-        end)
-        tween:Play()
-    end
-    function AreAllBedsDestroyed()
-        local beds = GetBeds()
-        return #beds == 0
-    end
-    function FindPlayersOnDifferentTeams()
-        local playersOnDifferentTeams = {}
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player.Team ~= lplr.Team then
-                table.insert(playersOnDifferentTeams, player)
-            end
-        end
-        return playersOnDifferentTeams
-    end    
-    function FindClosestPlayerNotOnTeam()
-        local players = FindPlayersOnDifferentTeams()
-        local closestPlayer = nil
-        local closestDistance = math.huge
-        for _, player in ipairs(players) do
-            local distance = (player.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
-            if distance < closestDistance then
-                closestPlayer = player
-                closestDistance = distance
-            end
-        end
-        return closestPlayer
-    end
-    function MoveToPlayerOrNextClosest()
-        local closestPlayer = FindClosestPlayerNotOnTeam()
-        if closestPlayer then
-            MoveToPlayer(closestPlayer)
-        end
-    end
-    function MoveToPlayer(player)
-        local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
-        if not humanoidRootPart then return end
-        local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
-        if not targetPosition then return end
-        local distance = (targetPosition - humanoidRootPart.Position).magnitude
-        local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-        local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
-        tween.Completed:Connect(function()
-            if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
-            else
-                MoveToPlayerOrNextClosest()
-            end
-        end)
-        tween:Play()
-    end
-    
-    test = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-        Name = "x",
-        Function = function(callback)
-            if callback then
-                repeat
-                    task.wait(0.5)
-                    if test.Enabled then
-                        local closestBed = FindClosestBed()
-                        if closestBed then
-                            MoveToBed(closestBed)
-                            BreakBed(closestBed)
-                        else
-                            if AreAllBedsDestroyed() then
-                                local closestPlayer = FindClosestPlayerNotOnTeam()
-                                if closestPlayer then
-                                    MoveToPlayer(closestPlayer)
-                                end
-                            end
-                        end
-                    end
-                until (not test.Enabled)
-            end
-        end, 
-        HoverText = "Prevents taking fall damage."
-    })
 end)
 
 runFunction(function()
