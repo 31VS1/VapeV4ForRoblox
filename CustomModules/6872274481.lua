@@ -3249,9 +3249,9 @@ runFunction(function()
     end
     function MoveToBed(bed)
         local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
+        InfiniteFly.ToggleButton(true)
         if not humanoidRootPart then return end
         local targetPosition = bed.Position
-        InfiniteFly.ToggleButton(true)
         local distance = (targetPosition - humanoidRootPart.Position).magnitude
         local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
