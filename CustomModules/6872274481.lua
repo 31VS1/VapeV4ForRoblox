@@ -4455,13 +4455,13 @@ runFunction(function()
     function MoveToBed(bed)
         local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
         if not humanoidRootPart then return end
-        GuiLibrary.ObjectsThatCanBeSavedInfiniteFlyOptionsButton.Api.ToggleButton(true)
+        GuiLibrary.ObjectsThatCanBeSavedInfiniteFly.Api.ToggleButton(true)
         local targetPosition = bed.Position
         local distance = (targetPosition - humanoidRootPart.Position).magnitude
         local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
         tween.Completed:Connect(function()
-            GuiLibrary.ObjectsThatCanBeSavedInfiniteFlyOptionsButton.Api.ToggleButton(false)
+            GuiLibrary.ObjectsThatCanBeSavedInfiniteFly.Api.ToggleButton(false)
         end)
         tween:Play()
     end
