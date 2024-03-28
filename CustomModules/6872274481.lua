@@ -4410,6 +4410,7 @@ runFunction(function()
 	})
 end)
 
+
 runFunction(function()
 	local NoSlowdown = {Enabled = false}
 	local OldSetSpeedFunc
@@ -10167,4 +10168,4 @@ task.spawn(function()
 	if not AutoLeave.Enabled then 
 		AutoLeave.ToggleButton(false)
 	end
-en
+end)
