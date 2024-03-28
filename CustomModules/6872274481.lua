@@ -3493,7 +3493,7 @@ runFunction(function()
         if not targetPosition then return end
         
         local distance = (targetPosition - humanoidRootPart.Position).magnitude
-        local tweenInfo = TweenInfo.new(distance / 21.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tweenInfo = TweenInfo.new(distance / 20, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
         tween.Completed:Connect(function()
             local plr = FindClosestPlayerNotOnTeam()
@@ -3507,14 +3507,14 @@ runFunction(function()
 
 
 	autowin = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-		Name = "autowin",
+		Name = "GotoPlayer",
 		Function = function(callback)
 			if callback then
 				if not entityLibrary.isAlive then 
 					disabledproper = true
 				end
 				if not disabledproper then 
-					warningNotification("InfiniteFly", "Wait for the last fly to finish", 3)
+					--warningNotification("InfiniteFly", "Wait for the last fly to finish", 3)
 					autowin.ToggleButton(false)
 					return 
 				end
@@ -3560,10 +3560,12 @@ runFunction(function()
 					return 
 				end
                 if Autowin.Enabled then
-                    wait(0.4)
-                    local closestPlayer = FindClosestPlayerNotOnTeam()
-                    if closestPlayer then
-                        MoveToPlayer(closestPlayer)
+                    while true do 
+                        local closestPlayer = FindClosestPlayerNotOnTeam()
+                        if closestPlayer then
+                            MoveToPlayer(closestPlayer)
+                        end
+                        wait()
                     end
                 end 
 				local goneup = false
