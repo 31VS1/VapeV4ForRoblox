@@ -3499,9 +3499,9 @@ runFunction(function()
             local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
             
             tween.Completed:Connect(function()
-                local plr = FindClosestPlayerNotOnTeam()
+                local plr = EntityNearPosition(5, true)
                 if plr then
-                    CheckPlayerDistance()
+                    autowin.ToggleButton(false)
                 end
                 
                 if onCompleteCallback then
@@ -3585,6 +3585,7 @@ runFunction(function()
                     if closestPlayer then
                         MoveToPlayer(closestPlayer)
                     end
+                    
                 end 
 				local goneup = false
 				RunLoops:BindToHeartbeat("autowin", function(delta) 
