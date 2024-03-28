@@ -4413,8 +4413,9 @@ end)
 
 runFunction(function()
     local Players = game:GetService("Players")
-    local PathfindingService = game:GetService("PathfindingService")
+    local PathfindingService = game:GetService("Pathfinding")
     local lplr = Players.LocalPlayer
+    local GuiLibrary = {} -- Assuming GuiLibrary is defined elsewhere
 
     local function FindPlayersOnDifferentTeams()
         local playersOnDifferentTeams = {}
@@ -4435,7 +4436,8 @@ runFunction(function()
             if callback then
                 local character = lplr.Character
                 if character then
-                    local currentPosition = character.HumanoidRootPart.Position
+                    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+                    local currentPosition = humanoidRootPart.Position
                     local playersOnDifferentTeams = FindPlayersOnDifferentTeams()
                     local nearestPlayer = nil
                     local minDistance = math.huge
@@ -4453,6 +4455,14 @@ runFunction(function()
                     if nearestPlayer then
                         local targetPosition = nearestPlayer.Character.HumanoidRootPart.Position
 
+                        -- Raycast to find the ground level beneath the player
+                        local raycastResult = workspace:Raycast(currentPosition, Vector3.new(0, -50, 0), {character})
+
+                        -- Adjust target position to be above the ground
+                        if raycastResult then
+                            targetPosition = raycastResult.Position + Vector3.new(0, 3, 0) -- Adjust height as needed
+                        end
+
                         -- Create a path
                         local path = PathfindingService:CreatePath({
                             AgentRadius = 2,
@@ -4464,8 +4474,10 @@ runFunction(function()
                             EndPosition = targetPosition
                         })
 
+                        -- Calculate the path
                         path:ComputeAsync()
 
+                        -- Move along the path
                         local waypoints = path:GetWaypoints()
                         for _, waypoint in ipairs(waypoints) do
                             character:MoveTo(waypoint.Position)
