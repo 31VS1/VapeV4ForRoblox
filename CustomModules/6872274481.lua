@@ -4412,6 +4412,9 @@ end)
 
 
 runFunction(function()
+    local Players = game:GetService("Players")
+    local PathfindingService = game:GetService("Pathfinding")
+    local lplr = Players.LocalPlayer
 
     local function FindPlayersOnDifferentTeams()
         local playersOnDifferentTeams = {}
@@ -4432,38 +4435,44 @@ runFunction(function()
             if callback then
                 local character = lplr.Character
                 if character then
-                    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-                    local currentPosition = humanoidRootPart.Position
-                    local targetPosition = currentPosition - Vector3.new(0, 10, 0)
-                    local raycastParams = RaycastParams.new()
-                    raycastParams.FilterDescendantsInstances = {character}
-                    local result = workspace:Raycast(currentPosition, Vector3.new(0, 10, 0), raycastParams)
-                    if result then
-                        targetPosition = result.Position
-                    end
+                    local currentPosition = character.HumanoidRootPart.Position
+                    local playersOnDifferentTeams = FindPlayersOnDifferentTeams()
+                    local nearestPlayer = nil
+                    local minDistance = math.huge
 
-                    local distance = (targetPosition - currentPosition).magnitude
-                    local tweenTime = distance / 23 
-                    local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, -1, true)
-                    local tween = game:GetService("TweenService"):Create(humanoidRootPart, tweenInfo, {Position = targetPosition})
-                    tween:Play()
-                end
-
-                local nearestPlayer = nil
-                local minDistance = math.huge
-                local currentPosition = lplr.Character and lplr.Character.HumanoidRootPart.Position or Vector3.new(0, 0, 0)
-                local playersOnDifferentTeams = FindPlayersOnDifferentTeams()
-                for _, player in ipairs(playersOnDifferentTeams) do
-                    local playerCharacter = player.Character
-                    if playerCharacter then
-                        local distance = (currentPosition - playerCharacter.HumanoidRootPart.Position).magnitude
+                    -- Find nearest player on a different team
+                    for _, player in ipairs(playersOnDifferentTeams) do
+                        local distance = (currentPosition - player.Character.HumanoidRootPart.Position).magnitude
                         if distance < minDistance then
                             minDistance = distance
                             nearestPlayer = player
                         end
                     end
+
+                    -- Use pathfinding to navigate to the nearest player
+                    if nearestPlayer then
+                        local targetPosition = nearestPlayer.Character.HumanoidRootPart.Position
+
+                        -- Create a path
+                        local path = PathfindingService:CreatePath({
+                            AgentRadius = 2,
+                            AgentHeight = 5,
+                            AgentCanJump = true,
+                            AgentJumpHeight = 10,
+                            AgentMaxSlope = 45,
+                            StartPosition = currentPosition,
+                            EndPosition = targetPosition
+                        })
+
+                        path:ComputeAsync()
+
+                        local waypoints = path:GetWaypoints()
+                        for _, waypoint in ipairs(waypoints) do
+                            character:MoveTo(waypoint.Position)
+                            character.Humanoid.MoveToFinished:Wait()
+                        end
+                    end
                 end
-                print("Nearest player on different team:", nearestPlayer and nearestPlayer.Name or "None")
             end
         end,
     })
