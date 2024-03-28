@@ -3498,6 +3498,8 @@ runFunction(function()
             if plr then
                 CheckPlayerDistance()
                 autowin.ToggleButton(false)
+            else
+                autowin.ToggleButton(true)
             end
         end)
         tween:Play()
