@@ -3408,7 +3408,7 @@ runFunction(function()
 			return "Heatseeker"
 		end
 	})
-    Autowin = InfiniteFly.CreateToggle({
+    Autowin = autowin.CreateToggle({
 		Name = "Autowin",
 		Function = function() end, 
 		Default = true
