@@ -3255,10 +3255,9 @@ runFunction(function()
             local tweenInfo = TweenInfo.new(distance / 23, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
             local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
             tween.Completed:Connect(function()
-                   local nextplayer = CheckPlayerDistance()
-                   if nextplayer then
-                        MoveToPlayerOrNextClosest()
-                   end
+                local nextplayer = CheckPlayerDistance()
+                if nextplayer then
+                    MoveToPlayerOrNextClosest()
                 end
             end)
             tween:Play()
