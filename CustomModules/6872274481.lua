@@ -3481,7 +3481,6 @@ runFunction(function()
         if closestPlayer then
             local distance = (closestPlayer.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
             if distance < 5 then
-                autowin.ToggleButton(false)
             else
                 autowin.ToggleButton(true)
             end
@@ -3494,12 +3493,13 @@ runFunction(function()
         if not humanoidRootPart then return end
         local targetPosition = player.Character.HumanoidRootPart.Position
         local distance = (targetPosition - humanoidRootPart.Position).magnitude
-        local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tweenInfo = TweenInfo.new(distance / 23, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
         tween.Completed:Connect(function()
             local plr = EntityNearPosition(5)
             if plr then
                 CheckPlayerDistance()
+                autowin.ToggleButton(false)
             end
         end)
         tween:Play()
