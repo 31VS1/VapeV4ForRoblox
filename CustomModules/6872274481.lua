@@ -3446,7 +3446,7 @@ runFunction(function()
 
     local function FindPlayersOnDifferentTeams()
         local playersOnDifferentTeams = {}
-        for _, player in ipairs(Players:GetPlayers()) do
+        for _, player in ipairs(game.Players:GetPlayers()) do
             if entityLibrary.isPlayerTargetable(player) then
                 table.insert(playersOnDifferentTeams, player)
             end
@@ -3473,6 +3473,7 @@ runFunction(function()
             MoveToPlayer(closestPlayer)
         end
     end
+
     local function CheckPlayerDistance()
         local closestPlayer = FindClosestPlayerNotOnTeam()
         if closestPlayer then
