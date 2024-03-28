@@ -4413,7 +4413,7 @@ end)
 
 runFunction(function()
     local Players = game:GetService("Players")
-    local PathfindingService = game:GetService("Pathfinding")
+    local PathfindingService = game:GetService("PathfindingService")
     local lplr = Players.LocalPlayer
 
     local function FindPlayersOnDifferentTeams()
@@ -10247,4 +10247,4 @@ task.spawn(function()
 	if not AutoLeave.Enabled then 
 		AutoLeave.ToggleButton(false)
 	end
-end)
+en
