@@ -3475,13 +3475,15 @@ runFunction(function()
             MoveToPlayer(closestPlayer)
         end
     end
-    
+    local closestPlayer = FindClosestPlayerNotOnTeam()
+
     local function CheckPlayerDistance()
         local closestPlayer = FindClosestPlayerNotOnTeam()
         if closestPlayer then
             local distance = (closestPlayer.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
             if distance < 5 then
                 autowin.ToggleButton(false)
+                MoveToPlayer(closestPlayer)
             else
                 autowin.ToggleButton(true)
             end
@@ -3489,7 +3491,6 @@ runFunction(function()
             autowin.ToggleButton(true)
         end
     end
-    
     function MoveToPlayer(player)
         local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
         if not humanoidRootPart then return end
@@ -3498,9 +3499,9 @@ runFunction(function()
         local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
         tween.Completed:Connect(function()
-            local nextplayer = CheckPlayerDistance()
-            if nextplayer then
-                MoveToPlayerOrNextClosest()
+            local plr = EntityNearPosition(5)
+            if plr then
+                CheckPlayerDistance()
             end
         end)
         tween:Play()
@@ -3559,18 +3560,18 @@ runFunction(function()
 					autowin.ToggleButton(false)
 					return 
 				end
-                if Autowin.Enabled then
-                    local closestPlayer = FindClosestPlayerNotOnTeam()
-                    if closestPlayer then
-                        MoveToPlayer(closestPlayer)
-                    end
-                end
 
 				local goneup = false
 				RunLoops:BindToHeartbeat("autowin", function(delta) 
 					if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then 
 						if bedwarsStore.matchState == 0 then return end
 					end
+                    if Autowin.Enabled then
+                        local closestPlayer = FindClosestPlayerNotOnTeam()
+                        if closestPlayer then
+                            MoveToPlayer(closestPlayer)
+                        end
+                    end    
 					if entityLibrary.isAlive then
 						if isnetworkowner(oldcloneroot) then 
 							local playerMass = (entityLibrary.character.HumanoidRootPart:GetMass() - 1.4) * (delta * 100)
