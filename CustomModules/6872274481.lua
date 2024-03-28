@@ -3481,6 +3481,7 @@ runFunction(function()
         if closestPlayer then
             local distance = (closestPlayer.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
             if distance < 5 then
+                MoveToPlayerOrNextClosest()
             else
                 autowin.ToggleButton(true)
             end
@@ -3564,13 +3565,6 @@ runFunction(function()
 							speedCFrame[3] = clone.CFrame.Z
 							oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
 							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
-                            if Autowin.Enabled then
-                                wait(0.4)
-                                local closestPlayer = FindClosestPlayerNotOnTeam()
-                                if closestPlayer then
-                                    MoveToPlayer(closestPlayer)
-                                end
-                            end 
 						else
 							InfiniteFly.ToggleButton(false)
 						end
@@ -3630,6 +3624,93 @@ runFunction(function()
                                 else
                                     disablefunc()
                                 end
+                            else
+                                if not entityLibrary.isAlive then 
+                                    disabledproper = true
+                                end
+                                if not disabledproper then 
+                                    warningNotification("InfiniteFly", "Wait for the last fly to finish", 3)
+                                    autowin.ToggleButton(false)
+                                    return 
+                                end
+                                clonesuccess = false
+                                if entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart) then
+                                    cloned = lplr.Character
+                                    oldcloneroot = entityLibrary.character.HumanoidRootPart
+                                    if not lplr.Character.Parent then 
+                                        autowin.ToggleButton(false)
+                                        return
+                                    end
+                                    lplr.Character.Parent = game
+                                    clone = oldcloneroot:Clone()
+                                    clone.Parent = lplr.Character
+                                    oldcloneroot.Parent = gameCamera
+                                    bedwars.QueryUtil:setQueryIgnored(oldcloneroot, true)
+                                    clone.CFrame = oldcloneroot.CFrame
+                                    lplr.Character.PrimaryPart = clone
+                                    lplr.Character.Parent = workspace
+                                    for i,v in pairs(lplr.Character:GetDescendants()) do 
+                                        if v:IsA("Weld") or v:IsA("Motor6D") then 
+                                            if v.Part0 == oldcloneroot then v.Part0 = clone end
+                                            if v.Part1 == oldcloneroot then v.Part1 = clone end
+                                        end
+                                        if v:IsA("BodyVelocity") then 
+                                            v:Destroy()
+                                        end
+                                    end
+                                    for i,v in pairs(oldcloneroot:GetChildren()) do 
+                                        if v:IsA("BodyVelocity") then 
+                                            v:Destroy()
+                                        end
+                                    end
+                                    if hip then 
+                                        lplr.Character.Humanoid.HipHeight = hip
+                                    end
+                                    hip = lplr.Character.Humanoid.HipHeight
+                                    clonesuccess = true
+                                end
+                                if not clonesuccess then 
+                                    warningNotification("InfiniteFly", "Character missing", 3)
+                                    autowin.ToggleButton(false)
+                                    return 
+                                end
+                
+                                local goneup = false
+                                RunLoops:BindToHeartbeat("autowin", function(delta) 
+                                    if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then 
+                                        if bedwarsStore.matchState == 0 then return end
+                                    end   
+                                    if entityLibrary.isAlive then
+                                        if isnetworkowner(oldcloneroot) then 
+                                            local playerMass = (entityLibrary.character.HumanoidRootPart:GetMass() - 1.4) * (delta * 100)
+                                            
+                                            local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (InfiniteFlyMode.Value == "Normal" and 20 or 20)
+                                            entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (InfiniteFlyUp and 30 or 0) + (InfiniteFlyDown and -30 or 0), 0))
+                                            if InfiniteFlyMode.Value ~= "Normal" then
+                                                entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((20 + getSpeed()) - 20)) * delta
+                                            end
+                
+                                            local speedCFrame = {oldcloneroot.CFrame:GetComponents()}
+                                            speedCFrame[1] = clone.CFrame.X
+                                            if speedCFrame[2] < 1000 or (not goneup) then 
+                                                speedCFrame[2] = 100000
+                                                goneup = true
+                                            end
+                                            speedCFrame[3] = clone.CFrame.Z
+                                            oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
+                                            oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
+                                            if Autowin.Enabled then
+                                                wait(0.4)
+                                                local closestPlayer = FindClosestPlayerNotOnTeam()
+                                                if closestPlayer then
+                                                    MoveToPlayer(closestPlayer)
+                                                end
+                                            end 
+                                        else
+                                            InfiniteFly.ToggleButton(false)
+                                        end
+                                    end
+                                end)
                             end
                             InfiniteFlyUp = false
                             InfiniteFlyDown = false
@@ -3637,6 +3718,13 @@ runFunction(function()
                     end)
                     tween:Play()
                 end
+                if Autowin.Enabled then
+                    wait(0.4)
+                    local closestPlayer = FindClosestPlayerNotOnTeam()
+                    if closestPlayer then
+                        MoveToPlayer(closestPlayer)
+                    end
+                end 
 			else
 				RunLoops:UnbindFromHeartbeat("autowin")
 				if clonesuccess and oldcloneroot and clone and lplr.Character.Parent == workspace and oldcloneroot.Parent ~= nil and disabledproper and cloned == lplr.Character then 
