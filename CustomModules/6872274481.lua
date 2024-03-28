@@ -3443,10 +3443,11 @@ runFunction(function()
 		oldcloneroot.CFrame = CFrame.new(unpack(origcf))
 		oldcloneroot = nil
 	end
+    local Players = game:GetService("Players")
 
     function FindPlayersOnDifferentTeams()
         local playersOnDifferentTeams = {}
-        for _, player in ipairs(game.Players:GetPlayers()) do
+        for _, player in ipairs(Players:GetPlayers()) do
             if player.Team ~= lplr.Team then
                 table.insert(playersOnDifferentTeams, player)
             end
@@ -3467,6 +3468,7 @@ runFunction(function()
         end
         return closestPlayer
     end
+
     local function MoveToPlayerOrNextClosest()
         local closestPlayer = FindClosestPlayerNotOnTeam()
         if closestPlayer then
@@ -3488,23 +3490,20 @@ runFunction(function()
         end
     end
     
-    local function MoveToPlayer(player)
-        if isVulnerable(player) then
-            local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
-            local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
-            if not targetPosition then return end
-            if not humanoidRootPart then return end
-            local distance = (targetPosition - humanoidRootPart.Position).magnitude
-            local tweenInfo = TweenInfo.new(distance / 23, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-            local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
-            tween.Completed:Connect(function()
-                local nextplayer = CheckPlayerDistance()
-                if nextplayer then
-                    MoveToPlayerOrNextClosest()
-                end
-            end)
-            tween:Play()
-        end
+    function MoveToPlayer(player)
+        local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart then return end
+        local targetPosition = player.Character.HumanoidRootPart.Position
+        local distance = (targetPosition - humanoidRootPart.Position).magnitude
+        local tweenInfo = TweenInfo.new(distance / 23.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
+        tween.Completed:Connect(function()
+            local nextplayer = CheckPlayerDistance()
+            if nextplayer then
+                MoveToPlayerOrNextClosest()
+            end
+        end)
+        tween:Play()
     end
 
 	autowin = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
