@@ -4434,10 +4434,10 @@ runFunction(function()
                 if character then
                     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
                     local currentPosition = humanoidRootPart.Position
-                    local targetPosition = currentPosition - Vector3.new(0, 10, 0) -- Example: Move down 10 studs
+                    local targetPosition = currentPosition - Vector3.new(0, 10, 0)
                     local raycastParams = RaycastParams.new()
                     raycastParams.FilterDescendantsInstances = {character}
-                    local result = workspace:Raycast(currentPosition, Vector3.new(0, -1, 0), raycastParams)
+                    local result = workspace:Raycast(currentPosition, Vector3.new(0, 4, 0), raycastParams)
                     if result then
                         targetPosition = result.Position
                     end
