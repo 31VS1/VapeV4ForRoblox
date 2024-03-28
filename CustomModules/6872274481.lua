@@ -3517,6 +3517,13 @@ runFunction(function()
 					autowin.ToggleButton(false)
 					return 
 				end
+                if Autowin.Enabled then
+                    local closestPlayer = FindClosestPlayerNotOnTeam()
+                    if closestPlayer then
+                        MoveToPlayer(closestPlayer)
+                    end
+                end 
+                wait(1)
 				clonesuccess = false
 				if entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart) then
 					cloned = lplr.Character
@@ -3563,13 +3570,7 @@ runFunction(function()
 				RunLoops:BindToHeartbeat("autowin", function(delta) 
 					if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then 
 						if bedwarsStore.matchState == 0 then return end
-					end
-                    if Autowin.Enabled then
-                        local closestPlayer = FindClosestPlayerNotOnTeam()
-                        if closestPlayer then
-                            MoveToPlayer(closestPlayer)
-                        end
-                    end    
+					end   
 					if entityLibrary.isAlive then
 						if isnetworkowner(oldcloneroot) then 
 							local playerMass = (entityLibrary.character.HumanoidRootPart:GetMass() - 1.4) * (delta * 100)
