@@ -4415,7 +4415,6 @@ runFunction(function()
     local Players = game:GetService("Players")
     local PathfindingService = game:GetService("Pathfinding")
     local lplr = Players.LocalPlayer
-    local GuiLibrary = {} -- Assuming GuiLibrary is defined elsewhere
 
     local function FindPlayersOnDifferentTeams()
         local playersOnDifferentTeams = {}
@@ -4486,7 +4485,7 @@ runFunction(function()
                     end
                 end
             end
-        end,
+        end
     })
 end)
        
