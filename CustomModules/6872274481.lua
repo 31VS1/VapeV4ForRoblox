@@ -3487,22 +3487,23 @@ runFunction(function()
         end
     end
     local function MoveToPlayer(player)
-	    local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
-	    if not humanoidRootPart then return end
-	    local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
-	    if not targetPosition then return end
-	    
-	    local distance = (targetPosition - humanoidRootPart.Position).magnitude
-	    local tweenInfo = TweenInfo.new(distance / 21.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-	    local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
-	    tween.Completed:Connect(function()
-	        local plr = FindClosestPlayerNotOnTeam()
-	        if plr then
-	            CheckPlayerDistance()
-	        end
-	    end)
-	    tween:Play()
-	end
+        local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart then return end
+        local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
+        if not targetPosition then return end
+        
+        local distance = (targetPosition - humanoidRootPart.Position).magnitude
+        local tweenInfo = TweenInfo.new(distance / 20, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
+        tween.Completed:Connect(function()
+            local plr = FindClosestPlayerNotOnTeam()
+            if plr then
+                CheckPlayerDistance()
+            end
+            autowin.ToggleButton(false)
+        end)
+        tween:Play()
+    end
 
 	autowin = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 		Name = "GotoPlayer",
