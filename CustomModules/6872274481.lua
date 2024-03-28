@@ -3499,7 +3499,7 @@ runFunction(function()
                 CheckPlayerDistance()
                 autowin.ToggleButton(false)
             else
-                autowin.ToggleButton(true)
+                --autowin.ToggleButton(true)
             end
         end)
         tween:Play()
