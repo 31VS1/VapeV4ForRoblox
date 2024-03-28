@@ -3560,12 +3560,10 @@ runFunction(function()
 					return 
 				end
                 if Autowin.Enabled then
-                    while true do 
-                        local closestPlayer = FindClosestPlayerNotOnTeam()
-                        if closestPlayer then
-                            MoveToPlayer(closestPlayer)
-                        end
-                        wait()
+                    wait(0.4)
+                    local closestPlayer = FindClosestPlayerNotOnTeam()
+                    if closestPlayer then
+                        MoveToPlayer(closestPlayer)
                     end
                 end 
 				local goneup = false
