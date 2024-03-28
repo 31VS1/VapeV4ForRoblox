@@ -3253,7 +3253,7 @@ runFunction(function()
             if not targetPosition then return end
             local distance = (targetPosition - humanoidRootPart.Position).magnitude
             local tweenInfo = TweenInfo.new(distance / 23, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-            local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
+            local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
             tween.Completed:Connect(function()
                    local nextplayer = CheckPlayerDistance()
                    if nextplayer then
