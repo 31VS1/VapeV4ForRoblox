@@ -3493,6 +3493,7 @@ runFunction(function()
             local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
             local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
             if not targetPosition then return end
+            if not humanoidRootPart then return end
             local distance = (targetPosition - humanoidRootPart.Position).magnitude
             local tweenInfo = TweenInfo.new(distance / 23, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
             local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
