@@ -3454,7 +3454,7 @@ runFunction(function()
         return playersOnDifferentTeams 
     end
     
-    local function FindClosestPlayerNotOnTeam()
+    function FindClosestPlayerNotOnTeam()
         local players = FindPlayersOnDifferentTeams()
         local closestPlayer = nil
         local closestDistance = math.huge
@@ -3467,7 +3467,6 @@ runFunction(function()
         end
         return closestPlayer
     end
-    
     local function MoveToPlayerOrNextClosest()
         local closestPlayer = FindClosestPlayerNotOnTeam()
         if closestPlayer then
@@ -3524,7 +3523,7 @@ runFunction(function()
 					cloned = lplr.Character
 					oldcloneroot = entityLibrary.character.HumanoidRootPart
 					if not lplr.Character.Parent then 
-						InfiniteFly.ToggleButton(false)
+						autowin.ToggleButton(false)
 						return
 					end
 					lplr.Character.Parent = game
