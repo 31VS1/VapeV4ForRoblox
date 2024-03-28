@@ -4437,7 +4437,7 @@ runFunction(function()
                     local targetPosition = currentPosition - Vector3.new(0, 10, 0)
                     local raycastParams = RaycastParams.new()
                     raycastParams.FilterDescendantsInstances = {character}
-                    local result = workspace:Raycast(currentPosition, Vector3.new(0, 4, 0), raycastParams)
+                    local result = workspace:Raycast(currentPosition, Vector3.new(0, 10, 0), raycastParams)
                     if result then
                         targetPosition = result.Position
                     end
