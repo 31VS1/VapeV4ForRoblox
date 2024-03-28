@@ -3558,7 +3558,13 @@ runFunction(function()
 					autowin.ToggleButton(false)
 					return 
 				end
-
+                if Autowin.Enabled then
+                    wait(0.4)
+                    local closestPlayer = FindClosestPlayerNotOnTeam()
+                    if closestPlayer then
+                        MoveToPlayer(closestPlayer)
+                    end
+                end 
 				local goneup = false
 				RunLoops:BindToHeartbeat("autowin", function(delta) 
 					if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then 
@@ -3583,13 +3589,6 @@ runFunction(function()
 							speedCFrame[3] = clone.CFrame.Z
 							oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
 							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
-                            if Autowin.Enabled then
-                                wait(0.4)
-                                local closestPlayer = FindClosestPlayerNotOnTeam()
-                                if closestPlayer then
-                                    MoveToPlayer(closestPlayer)
-                                end
-                            end 
 						else
 							InfiniteFly.ToggleButton(false)
 						end
