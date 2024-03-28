@@ -3520,7 +3520,7 @@ runFunction(function()
         game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
             updateTimer = updateTimer + deltaTime
             if updateTimer >= updateInterval then
-                updateTimer = 0
+                updateTimer = 3
                 UpdateTargetPosition()
             end
         end)
