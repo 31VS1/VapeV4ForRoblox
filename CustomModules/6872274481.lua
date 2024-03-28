@@ -3475,7 +3475,6 @@ runFunction(function()
             MoveToPlayer(closestPlayer)
         end
     end
-    local closestPlayer = FindClosestPlayerNotOnTeam()
 
     local function CheckPlayerDistance()
         local closestPlayer = FindClosestPlayerNotOnTeam()
