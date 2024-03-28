@@ -3445,7 +3445,7 @@ runFunction(function()
 	end
     local Players = game:GetService("Players")
 
-    function FindPlayersOnDifferentTeams()
+    local function FindPlayersOnDifferentTeams()
         local playersOnDifferentTeams = {}
         for _, player in ipairs(Players:GetPlayers()) do
             if player.Team ~= lplr.Team then
@@ -3455,12 +3455,12 @@ runFunction(function()
         return playersOnDifferentTeams
     end
     
-    function FindClosestPlayerNotOnTeam()
+    local function FindClosestPlayerNotOnTeam()
         local players = FindPlayersOnDifferentTeams()
         local closestPlayer = nil
         local closestDistance = math.huge
         for _, player in ipairs(players) do
-            local distance = (player.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
+            local distance = (player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position) and (player.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude or math.huge
             if distance < closestDistance then
                 closestPlayer = player
                 closestDistance = distance
@@ -3468,7 +3468,7 @@ runFunction(function()
         end
         return closestPlayer
     end
-
+    
     local function MoveToPlayerOrNextClosest()
         local closestPlayer = FindClosestPlayerNotOnTeam()
         if closestPlayer then
@@ -3489,21 +3489,22 @@ runFunction(function()
     function MoveToPlayer(player)
         local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
         if not humanoidRootPart then return end
-        local targetPosition = player.Character.HumanoidRootPart.Position
+        local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
+        if not targetPosition then return end
+        
         local distance = (targetPosition - humanoidRootPart.Position).magnitude
         local tweenInfo = TweenInfo.new(distance / 21.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-        local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
+        local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
         tween.Completed:Connect(function()
-            local plr = EntityNearPosition(5)
+            local plr = FindClosestPlayerNotOnTeam()
             if plr then
                 CheckPlayerDistance()
-                autowin.ToggleButton(false)
-            else
-                --autowin.ToggleButton(true)
             end
+            autowin.ToggleButton(false)
         end)
         tween:Play()
     end
+
 
 	autowin = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 		Name = "autowin",
