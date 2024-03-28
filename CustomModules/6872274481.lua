@@ -3391,292 +3391,7 @@ runFunction(function()
 	})
 end)
 
-runFunction(function()
-	local InfiniteFly = {Enabled = false}
-	local InfiniteFlyMode = {Value = "CFrame"}
-	local InfiniteFlyUp = false
-	local InfiniteFlyDown = false
-	local alternatelist = {"Normal", "AntiCheat A", "AntiCheat B"}
-	local clonesuccess = false
-	local disabledproper = true
-	local oldcloneroot
-	local cloned
-	local clone
-	local bodyvelo
-	local FlyOverlap = OverlapParams.new()
-	FlyOverlap.MaxParts = 9e9
-	FlyOverlap.FilterDescendantsInstances = {}
-	FlyOverlap.RespectCanCollide = true
 
-	local function disablefunc()
-		if bodyvelo then bodyvelo:Destroy() end
-		RunLoops:UnbindFromHeartbeat("InfiniteFlyOff")
-		disabledproper = true
-		if not oldcloneroot or not oldcloneroot.Parent then return end
-		lplr.Character.Parent = game
-		oldcloneroot.Parent = lplr.Character
-		lplr.Character.PrimaryPart = oldcloneroot
-		lplr.Character.Parent = workspace
-		oldcloneroot.CanCollide = true
-		for i,v in pairs(lplr.Character:GetDescendants()) do 
-			if v:IsA("Weld") or v:IsA("Motor6D") then 
-				if v.Part0 == clone then v.Part0 = oldcloneroot end
-				if v.Part1 == clone then v.Part1 = oldcloneroot end
-			end
-			if v:IsA("BodyVelocity") then 
-				v:Destroy()
-			end
-		end
-		for i,v in pairs(oldcloneroot:GetChildren()) do 
-			if v:IsA("BodyVelocity") then 
-				v:Destroy()
-			end
-		end
-		local oldclonepos = clone.Position.Y
-		if clone then 
-			clone:Destroy()
-			clone = nil
-		end
-		lplr.Character.Humanoid.HipHeight = hip or 2
-		local origcf = {oldcloneroot.CFrame:GetComponents()}
-		origcf[2] = oldclonepos
-		oldcloneroot.CFrame = CFrame.new(unpack(origcf))
-		oldcloneroot = nil
-	end
-    local Players = game:GetService("Players")
-
-    local function FindPlayersOnDifferentTeams()
-        local playersOnDifferentTeams = {}
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player.Team ~= lplr.Team then
-                table.insert(playersOnDifferentTeams, player)
-            end
-        end
-        return playersOnDifferentTeams
-    end
-    
-    local function FindClosestPlayerNotOnTeam()
-        local players = FindPlayersOnDifferentTeams()
-        local closestPlayer = nil
-        local closestDistance = math.huge
-        for _, player in ipairs(players) do
-            local distance = (player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position) and (player.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude or math.huge
-            if distance < closestDistance then
-                closestPlayer = player
-                closestDistance = distance
-            end
-        end
-        return closestPlayer
-    end
-    
-    local function MoveToPlayerOrNextClosest()
-        local closestPlayer = FindClosestPlayerNotOnTeam()
-        if closestPlayer then
-            MoveToPlayer(closestPlayer)
-        end
-    end
-
-    local function CheckPlayerDistance()
-        local closestPlayer = FindClosestPlayerNotOnTeam()
-        if closestPlayer then
-            local distance = (closestPlayer.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
-            if distance < 5 then
-            else
-               
-            end
-        end
-    end
-    local function MoveToPlayer(player, onCompleteCallback)
-        local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
-        if not humanoidRootPart then return end
-        
-        local function UpdateTargetPosition()
-            local targetPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
-            if not targetPosition then return end
-            
-            local distance = (targetPosition - humanoidRootPart.Position).magnitude
-            local tweenInfo = TweenInfo.new(distance / 20, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-            local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 10, 0))})
-            
-            tween.Completed:Connect(function()
-                local plr = EntityNearPosition(5, true)
-                if plr then
-                    autowin.ToggleButton(false)
-                end
-                
-                if onCompleteCallback then
-                    onCompleteCallback()
-                end
-            end)
-            
-            tween:Play()
-        end
-        
-        UpdateTargetPosition()
-        
-        local updateInterval = 0.5
-        local updateTimer = 0
-        
-        game:GetService("RunService").Heartbeat:Connect(function(deltaTime)
-            updateTimer = updateTimer + deltaTime
-            if updateTimer >= updateInterval then
-                updateTimer = 3
-                UpdateTargetPosition()
-            end
-        end)
-    end
-
-	autowin = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-		Name = "GotoPlayer",
-		Function = function(callback)
-			if callback then
-				if not entityLibrary.isAlive then 
-					disabledproper = true
-				end
-				if not disabledproper then 
-					--warningNotification("InfiniteFly", "Wait for the last fly to finish", 3)
-					autowin.ToggleButton(false)
-					return 
-				end
-				clonesuccess = false
-				if entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart) then
-					cloned = lplr.Character
-					oldcloneroot = entityLibrary.character.HumanoidRootPart
-					if not lplr.Character.Parent then 
-						autowin.ToggleButton(false)
-						return
-					end
-					lplr.Character.Parent = game
-					clone = oldcloneroot:Clone()
-					clone.Parent = lplr.Character
-					oldcloneroot.Parent = gameCamera
-					bedwars.QueryUtil:setQueryIgnored(oldcloneroot, true)
-					clone.CFrame = oldcloneroot.CFrame
-					lplr.Character.PrimaryPart = clone
-					lplr.Character.Parent = workspace
-					for i,v in pairs(lplr.Character:GetDescendants()) do 
-						if v:IsA("Weld") or v:IsA("Motor6D") then 
-							if v.Part0 == oldcloneroot then v.Part0 = clone end
-							if v.Part1 == oldcloneroot then v.Part1 = clone end
-						end
-						if v:IsA("BodyVelocity") then 
-							v:Destroy()
-						end
-					end
-					for i,v in pairs(oldcloneroot:GetChildren()) do 
-						if v:IsA("BodyVelocity") then 
-							v:Destroy()
-						end
-					end
-					if hip then 
-						lplr.Character.Humanoid.HipHeight = hip
-					end
-					hip = lplr.Character.Humanoid.HipHeight
-					clonesuccess = true
-				end
-				if not clonesuccess then 
-					warningNotification("InfiniteFly", "Character missing", 3)
-					autowin.ToggleButton(false)
-					return 
-				end
-                if Autowin.Enabled then
-                    wait(0.4)
-                    local closestPlayer = FindClosestPlayerNotOnTeam()
-                    if closestPlayer then
-                        MoveToPlayer(closestPlayer)
-                    end
-                    
-                end 
-				local goneup = false
-				RunLoops:BindToHeartbeat("autowin", function(delta) 
-					if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled then 
-						if bedwarsStore.matchState == 0 then return end
-					end   
-					if entityLibrary.isAlive then
-						if isnetworkowner(oldcloneroot) then 
-							local playerMass = (entityLibrary.character.HumanoidRootPart:GetMass() - 1.4) * (delta * 100)
-							
-							local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (InfiniteFlyMode.Value == "Normal" and 20 or 20)
-							entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (InfiniteFlyUp and 30 or 0) + (InfiniteFlyDown and -30 or 0), 0))
-							if InfiniteFlyMode.Value ~= "Normal" then
-								entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((20 + getSpeed()) - 20)) * delta
-							end
-
-							local speedCFrame = {oldcloneroot.CFrame:GetComponents()}
-							speedCFrame[1] = clone.CFrame.X
-							if speedCFrame[2] < 1000 or (not goneup) then 
-								speedCFrame[2] = 100000
-								goneup = true
-							end
-							speedCFrame[3] = clone.CFrame.Z
-							oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
-							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
-						else
-							InfiniteFly.ToggleButton(false)
-						end
-					end
-				end)
-			else
-				RunLoops:UnbindFromHeartbeat("autowin")
-				if clonesuccess and oldcloneroot and clone and lplr.Character.Parent == workspace and oldcloneroot.Parent ~= nil and disabledproper and cloned == lplr.Character then 
-					local rayparams = RaycastParams.new()
-					rayparams.FilterDescendantsInstances = {lplr.Character, gameCamera}
-					rayparams.RespectCanCollide = true
-					local ray = workspace:Raycast(Vector3.new(oldcloneroot.Position.X, clone.CFrame.p.Y, oldcloneroot.Position.Z), Vector3.new(0, -1000, 0), rayparams)
-					local origcf = {clone.CFrame:GetComponents()}
-					origcf[1] = oldcloneroot.Position.X
-					origcf[2] = ray and ray.Position.Y + (entityLibrary.character.Humanoid.HipHeight + (oldcloneroot.Size.Y / 2)) or clone.CFrame.p.Y
-					origcf[3] = oldcloneroot.Position.Z
-					oldcloneroot.CanCollide = true
-					bodyvelo = Instance.new("BodyVelocity")
-					bodyvelo.MaxForce = Vector3.new(0, 9e9, 0)
-					bodyvelo.Velocity = Vector3.new(0, -1, 0)
-					bodyvelo.Parent = oldcloneroot
-					oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, -1, clone.Velocity.Z)
-					RunLoops:BindToHeartbeat("autowinoff", function(dt)
-						if oldcloneroot then 
-							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, -1, clone.Velocity.Z)
-							local bruh = {clone.CFrame:GetComponents()}
-							bruh[2] = oldcloneroot.CFrame.Y
-							local newcf = CFrame.new(unpack(bruh))
-							FlyOverlap.FilterDescendantsInstances = {lplr.Character, gameCamera}
-							local allowed = true
-							for i,v in pairs(workspace:GetPartBoundsInRadius(newcf.p, 2, FlyOverlap)) do 
-								if (v.Position.Y + (v.Size.Y / 2)) > (newcf.p.Y + 0.5) then 
-									allowed = false
-									break
-								end
-							end
-							if allowed then
-								oldcloneroot.CFrame = newcf
-							end
-						end
-					end)
-					oldcloneroot.CFrame = CFrame.new(unpack(origcf))
-					entityLibrary.character.Humanoid:ChangeState(Enum.HumanoidStateType.Landed)
-					disabledproper = false
-					if isnetworkowner(oldcloneroot) then 
-						warningNotification("InfiniteFly", "Waiting 1.5s to not flag", 3)
-						task.delay(1.5, disablefunc)
-					else
-						disablefunc()
-					end
-				end
-				InfiniteFlyUp = false
-				InfiniteFlyDown = false
-			end
-		end,
-		HoverText = "Makes you go zoom",
-		ExtraText = function()
-			return "Heatseeker"
-		end
-	})
-    Autowin = autowin.CreateToggle({
-		Name = "Autowin",
-		Function = function() end, 
-		Default = true
-	})
-end)
 
 local killauraNearPlayer
 runFunction(function()
@@ -4694,6 +4409,66 @@ runFunction(function()
 		HoverText = "Prevents taking fall damage."
 	})
 end)
+
+
+runFunction(function()
+
+    local function FindPlayersOnDifferentTeams()
+        local playersOnDifferentTeams = {}
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player.Team ~= lplr.Team then
+                table.insert(playersOnDifferentTeams, player)
+            end
+        end
+        return playersOnDifferentTeams
+    end
+
+    local NoFall = {Enabled = false}
+    local autowin
+
+    autowin = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+        Name = "autowin",
+        Function = function(callback)
+            if callback then
+                local character = lplr.Character
+                if character then
+                    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+                    local currentPosition = humanoidRootPart.Position
+                    local targetPosition = currentPosition - Vector3.new(0, 10, 0) -- Example: Move down 10 studs
+                    local raycastParams = RaycastParams.new()
+                    raycastParams.FilterDescendantsInstances = {character}
+                    local result = workspace:Raycast(currentPosition, Vector3.new(0, -1, 0), raycastParams)
+                    if result then
+                        targetPosition = result.Position
+                    end
+
+                    local distance = (targetPosition - currentPosition).magnitude
+                    local tweenTime = distance / 23 
+                    local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, -1, true)
+                    local tween = game:GetService("TweenService"):Create(humanoidRootPart, tweenInfo, {Position = targetPosition})
+                    tween:Play()
+                end
+
+                local nearestPlayer = nil
+                local minDistance = math.huge
+                local currentPosition = lplr.Character and lplr.Character.HumanoidRootPart.Position or Vector3.new(0, 0, 0)
+                local playersOnDifferentTeams = FindPlayersOnDifferentTeams()
+                for _, player in ipairs(playersOnDifferentTeams) do
+                    local playerCharacter = player.Character
+                    if playerCharacter then
+                        local distance = (currentPosition - playerCharacter.HumanoidRootPart.Position).magnitude
+                        if distance < minDistance then
+                            minDistance = distance
+                            nearestPlayer = player
+                        end
+                    end
+                end
+                print("Nearest player on different team:", nearestPlayer and nearestPlayer.Name or "None")
+            end
+        end,
+    })
+end)
+       
 
 runFunction(function()
 	local NoSlowdown = {Enabled = false}
