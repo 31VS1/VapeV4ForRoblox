@@ -3514,10 +3514,7 @@ runFunction(function()
         heartbeatConnection = RunService.Heartbeat:Connect(function()
             updatePosition()
         end)
-    
-        delay(1, function()
-            heartbeatConnection:Disconnect() -- Disconnect heartbeat after 1 second
-        end)
+
     end
 
 	autowin = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
