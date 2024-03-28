@@ -3494,7 +3494,7 @@ runFunction(function()
 	    
 	    local distance = (targetPosition - humanoidRootPart.Position).magnitude
 	    local tweenInfo = TweenInfo.new(distance / 21.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-	    local tween = TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
+	    local tween = tweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition + Vector3.new(0, 1, 0))})
 	    tween.Completed:Connect(function()
 	        local plr = FindClosestPlayerNotOnTeam()
 	        if plr then
