@@ -3451,6 +3451,7 @@ runFunction(function()
                 table.insert(playersOnDifferentTeams, player)
             end
         end
+        return playersOnDifferentTeams 
     end
     
     local function FindClosestPlayerNotOnTeam()
@@ -3473,7 +3474,7 @@ runFunction(function()
             MoveToPlayer(closestPlayer)
         end
     end
-
+    
     local function CheckPlayerDistance()
         local closestPlayer = FindClosestPlayerNotOnTeam()
         if closestPlayer then
@@ -3487,7 +3488,7 @@ runFunction(function()
             autowin.ToggleButton(true)
         end
     end
-
+    
     local function MoveToPlayer(player)
         if isVulnerable(player) then
             local humanoidRootPart = lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart")
