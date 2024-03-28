@@ -3482,7 +3482,7 @@ runFunction(function()
             local distance = (closestPlayer.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
             if distance < 5 then
             else
-                autowin.ToggleButton(true)
+               
             end
         end
     end
