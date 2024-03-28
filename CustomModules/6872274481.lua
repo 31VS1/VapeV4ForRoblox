@@ -3444,14 +3444,14 @@ runFunction(function()
 		oldcloneroot = nil
 	end
 
-    local function FindPlayersOnDifferentTeams()
+    function FindPlayersOnDifferentTeams()
         local playersOnDifferentTeams = {}
         for _, player in ipairs(game.Players:GetPlayers()) do
-            if entityLibrary.isPlayerTargetable(player) then
+            if player.Team ~= lplr.Team then
                 table.insert(playersOnDifferentTeams, player)
             end
         end
-        return playersOnDifferentTeams 
+        return playersOnDifferentTeams
     end
     
     function FindClosestPlayerNotOnTeam()
