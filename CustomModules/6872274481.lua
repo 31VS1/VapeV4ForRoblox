@@ -3517,13 +3517,6 @@ runFunction(function()
 					autowin.ToggleButton(false)
 					return 
 				end
-                if Autowin.Enabled then
-                    local closestPlayer = FindClosestPlayerNotOnTeam()
-                    if closestPlayer then
-                        MoveToPlayer(closestPlayer)
-                    end
-                end 
-                wait(1)
 				clonesuccess = false
 				if entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart) then
 					cloned = lplr.Character
@@ -3590,6 +3583,13 @@ runFunction(function()
 							speedCFrame[3] = clone.CFrame.Z
 							oldcloneroot.CFrame = CFrame.new(unpack(speedCFrame))
 							oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
+                            if Autowin.Enabled then
+                                wait(0.4)
+                                local closestPlayer = FindClosestPlayerNotOnTeam()
+                                if closestPlayer then
+                                    MoveToPlayer(closestPlayer)
+                                end
+                            end 
 						else
 							InfiniteFly.ToggleButton(false)
 						end
